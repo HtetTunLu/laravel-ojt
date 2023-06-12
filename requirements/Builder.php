@@ -289,12 +289,14 @@ class Builder
      */
     public function getAction(): string
     {
-        // dd($this);
         if ($this->action) {
             return $this->action;
         }
 
         if ($this->isMode(static::MODE_EDIT)) {
+            if ($this->form->resource() === 'http://localhost:8000/admin/auth/users') {
+                return $this->form->resource() . '/' . $this->id;
+            }
             return $this->form->resource() . '/' . $this->id . '/confirm_update' . '?' . http_build_query($this->fields());
         }
 
@@ -490,7 +492,6 @@ class Builder
     protected function addRedirectUrlField()
     {
         $previous = URL::previous();
-        // dd($previous);
         if (!$previous || $previous === URL::current()) {
             return;
         }
@@ -509,10 +510,14 @@ class Builder
      */
     public function open($options = []): string
     {
-        // dd($this->isMode(self::MODE_CONFIRM_CREATE));
         $attributes = [];
+
         if ($this->isMode(self::MODE_EDIT)) {
-            $this->addHiddenField((new Hidden('_method'))->value('POST'));
+            if ($this->form->resource() === 'http://localhost:8000/admin/auth/users') {
+                $this->addHiddenField((new Hidden('_method'))->value('PUT'));
+            } else {
+                $this->addHiddenField((new Hidden('_method'))->value('POST'));
+            }
         }
         if ($this->isMode(self::MODE_CONFIRM)) {
             $this->addHiddenField((new Hidden('_method'))->value('PUT'));

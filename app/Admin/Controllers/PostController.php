@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -59,11 +60,26 @@ class PostController extends AdminController
             // Add a column filter
             $filter->like('description', 'description');
             // Sets the range query for the created_at field
-            $filter->between('created_at', 'Created Time')->datetime();
+            $filter->between('created_at', 'Created At')->datetime();
         });
         $grid->quickSearch(function ($model, $query) {
             $model->where('name', 'like', "%{$query}%")
                 ->orWhere('description', 'like', "%{$query}%");
+        });
+
+        $grid->export(function ($export) {
+            $export->originalValue(['name', 'user_id']);
+            $export->column('created_at', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+            $export->column('updated_at', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+        });
+
+        $grid->actions(function ($value) {
+            $value->getKey();
+            // dd($value);
         });
         return $grid;
     }
@@ -120,17 +136,17 @@ class PostController extends AdminController
                 $name = $row[1];
                 $description = $row[2];
 
-                $question = Post::where('id', $id)->first();
-                if (!$question) {
+                $post = Post::where('id', $id)->first();
+                if (!$post) {
                     $req = new Post();
                     $req->id = $id;
                     $req->name = $name;
                     $req->description = $description;
                     $req->save();
                 } else {
-                    $question->name = $name;
-                    $question->description = $description;
-                    $question->save();
+                    $post->name = $name;
+                    $post->description = $description;
+                    $post->save();
                 }
             }
 

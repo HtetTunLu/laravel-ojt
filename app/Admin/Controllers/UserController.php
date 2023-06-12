@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -30,11 +31,31 @@ class UserController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('email', __('Email'));
         $grid->column('email_verified_at', __('Email verified at'));
-        $grid->column('password', __('Password'));
         $grid->column('remember_token', __('Remember token'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
+        $grid->filter(function ($filter) {
+            // Remove the default id filter
+            $filter->disableIdFilter();
+            // Add a column filter
+            $filter->like('name', 'Name');
+            $filter->like('email', 'Email');
+            // Sets the range query for the created_at field
+            $filter->between('created_at', 'Created At')->datetime();
+        });
+
+        $grid->export(function ($export) {
+            $export->column('email_verified_at', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+            $export->column('created_at', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+            $export->column('updated_at', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+        });
         return $grid;
     }
 
@@ -75,8 +96,7 @@ class UserController extends AdminController
 
         $form->password('password', __('Password'))->rules('required')->default(function ($form) {
             return $form->model()->password;
-        })->readonly();
-        $form->text('remember_token', __('Remember token'));
+        });
         $form->confirm('confirm edit ?', 'edit');
         $form->confirm('confirm create ?', 'create');
         return $form;
