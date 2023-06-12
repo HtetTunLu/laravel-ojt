@@ -4,7 +4,7 @@ use App\Admin\Controllers\PostController;
 use Encore\Admin\Controllers\AdminController;
 use Illuminate\Routing\Router;
 
-Admin::routes();
+Encore\Admin\Facades\Admin::routes();
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
@@ -16,10 +16,14 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('users-clients', UserController::class);
     $router->resource('posts', PostController::class);
+
     // for custom confirm edit
     $router->post('/posts/{id}/confirm_update', [AdminController::class, 'confirm_update']);
     $router->post('/users-clients/{id}/confirm_update', [AdminController::class, 'confirm_update']);
     $router->put('/posts/{id}/confirm_update', [AdminController::class, 'edit']);
     $router->put('/users-clients/{id}/confirm_update', [AdminController::class, 'edit']);
+
+    // for CSV import
+    $router->post('questions/csv/import', 'PostController@import');
 
 });

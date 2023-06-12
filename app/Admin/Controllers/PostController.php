@@ -9,6 +9,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
+use App\Admin\Extensions\Tools\ImportButton; // Add for custom CSV Import Button
+use Encore\Admin\Layout\Content; // Add for CSV Import
+use Illuminate\Http\Request;
+
 class PostController extends AdminController
 {
     /**
@@ -26,6 +30,11 @@ class PostController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Post());
+
+        // Use custom button tools here which made above.
+        $grid->tools(function ($tools) {
+            $tools->append(new ImportButton());
+        });
 
         $grid->column('id', __('Id'));
         // $grid->column('name', __('Name'));
@@ -94,5 +103,38 @@ class PostController extends AdminController
         $form->disableViewCheck();
         $form->confirm('confirm edit ?', 'edit');
         return $form;
+    }
+
+    /**
+     * Import interface.
+     */
+    protected function import(Content $content, Request $request)
+    {
+        $file = $request->file('file');
+        $csv = array_map('str_getcsv', file($file));
+
+        foreach ($csv as $key => $row) {
+            // index 0 for titles
+            if ($key > 0) {
+                $id = (Int) $row[0];
+                $name = $row[1];
+                $description = $row[2];
+
+                $question = Post::where('id', $id)->first();
+                if (!$question) {
+                    $req = new Post();
+                    $req->id = $id;
+                    $req->name = $name;
+                    $req->description = $description;
+                    $req->save();
+                } else {
+                    $question->name = $name;
+                    $question->description = $description;
+                    $question->save();
+                }
+            }
+
+        }
+        return redirect('admin/posts');
     }
 }
