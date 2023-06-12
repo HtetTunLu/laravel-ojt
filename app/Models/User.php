@@ -42,4 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    public function posts() {
+        return $this->hasMany(Post::class);
+    }
 }

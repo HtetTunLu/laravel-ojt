@@ -18,6 +18,8 @@ return [
     'delete'                => 'Delete',
     'remove'                => 'Remove',
     'edit'                  => 'Edit',
+    'confirm_update'        => 'Confirm Update',
+    'confirm_create'        => 'Confirm Create',
     'view'                  => 'View',
     'continue_editing'      => 'Continue editing',
     'continue_creating'     => 'Continue creating',
