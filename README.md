@@ -34,8 +34,6 @@ Change Custom Files
 
     - requirements/Form.php -> Vendor/encore/laravel-admin/src/Form.php
 
-    - requirements/SoftDeletes.php -> Vendor/laravel/framework/src/Illuminate/Database/Eloquent/SoftDeletes.php
-
     - requirements/UserController.php -> Vendor/encore/laravel-admin/src/Controllers/UserController.php
 
 ```
