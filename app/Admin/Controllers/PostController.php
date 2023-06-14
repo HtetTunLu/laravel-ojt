@@ -112,15 +112,15 @@ class PostController extends AdminController
     protected function form()
     {
         Admin::script('$(document).ready(function(){
-            $(".btn-primary").click(function(){
-                if($(".btn-primary").text() === "Submit") {
+            $(".pull-right button").prop("class", "btn btn-primary submit");
+            $(".submit").click(function(){
+                if($(".submit").text() === "Submit") {
                     $("form input").prop("readonly", true);
                     $("form textarea").prop("readonly", true);
                     $(".select2-selection").click(function() {
-                        console.log("clicked");
                         $(".select2-dropdown")[0].style.visibility = "hidden";
                     });
-                    $(".btn-primary").html("Confirm");
+                    $(".submit").html("Confirm");
                     $(".btn-warning").html("Back");
                     return false;
                 }
@@ -133,7 +133,7 @@ class PostController extends AdminController
                     $(".select2-selection").click(function() {
                         $(".select2-dropdown")[0].style.visibility = "visible";
                     });
-                    $(".btn-primary").html("Submit");
+                    $(".submit").html("Submit");
                     $(".btn-warning").html("Reset");
                     return false;
                 }
