@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -110,6 +111,35 @@ class PostController extends AdminController
      */
     protected function form()
     {
+        Admin::script('$(document).ready(function(){
+            $(".btn-primary").click(function(){
+                if($(".btn-primary").text() === "Submit") {
+                    $("form input").prop("readonly", true);
+                    $("form textarea").prop("readonly", true);
+                    $(".select2-selection").click(function() {
+                        console.log("clicked");
+                        $(".select2-dropdown")[0].style.visibility = "hidden";
+                    });
+                    $(".btn-primary").html("Confirm");
+                    $(".btn-warning").html("Back");
+                    return false;
+                }
+            });
+
+            $(".btn-warning").click(function(){
+                if($(".btn-warning").text() === "Back") {
+                    $("form input").prop("readonly", false);
+                    $("form textarea").prop("readonly", false);
+                    $(".select2-selection").click(function() {
+                        $(".select2-dropdown")[0].style.visibility = "visible";
+                    });
+                    $(".btn-primary").html("Submit");
+                    $(".btn-warning").html("Reset");
+                    return false;
+                }
+            });
+        });');
+
         $form = new Form(new Post());
         $form->text('name', __('Name'))->rules('required');
         $form->textarea('description', __('Description'))->rules('required');
@@ -117,7 +147,6 @@ class PostController extends AdminController
         $form->disableCreatingCheck();
         $form->disableEditingCheck();
         $form->disableViewCheck();
-        $form->confirm('confirm edit ?', 'edit');
         return $form;
     }
 

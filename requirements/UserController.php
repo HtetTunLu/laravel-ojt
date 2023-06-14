@@ -3,6 +3,7 @@
 namespace Encore\Admin\Controllers;
 
 use Carbon\Carbon;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -34,10 +35,11 @@ class UserController extends AdminController
         $grid->column('name', trans('admin.name'));
         $grid->column('email', __('Email'));
         $grid->column('phone', __('Phone Number'));
-        $grid->column('dob', __('Date of Birth'))->display(function ($value){
+        $grid->column('dob', __('Date of Birth'))->display(function ($value) {
             return Carbon::parse($value)->format('Y/m/d');
         });
         $grid->column('address', __('Address'));
+        // $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
         $grid->column('created_at', trans('admin.created_at'));
         $grid->column('updated_at', trans('admin.updated_at'));
 
@@ -114,6 +116,30 @@ class UserController extends AdminController
      */
     public function form()
     {
+        Admin::script('$(document).ready(function(){
+            $(".pull-right button").prop("class", "btn btn-primary submit");
+            $(".submit").click(function(){
+                if($(".submit").text() === "Submit") {
+                    $("form input").prop("readonly", true);
+                    $("form textarea").prop("readonly", true);
+                    $(".btn-file")[0].style.visibility = "hidden";
+                    $(".submit").html("Confirm");
+                    $(".btn-warning").html("Back");
+                    return false;
+                }
+            });
+
+            $(".btn-warning").click(function(){
+                if($(".btn-warning").text() === "Back") {
+                    $("form input").prop("readonly", false);
+                    $("form textarea").prop("readonly", false);
+                    $(".btn-file")[0].style.visibility = "visible";
+                    $(".submit").html("Submit");
+                    $(".btn-warning").html("Reset");
+                    return false;
+                }
+            });
+        });');
         $userModel = config('admin.database.users_model');
         $roleModel = config('admin.database.roles_model');
 
@@ -141,8 +167,6 @@ class UserController extends AdminController
 
         $form->ignore(['password_confirmation']);
 
-        $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
-
         $form->display('created_at', trans('admin.created_at'));
         $form->display('updated_at', trans('admin.updated_at'));
 
@@ -151,6 +175,9 @@ class UserController extends AdminController
                 $form->password = Hash::make($form->password);
             }
         });
+        $form->disableCreatingCheck();
+        $form->disableEditingCheck();
+        $form->disableViewCheck();
 
         return $form;
     }

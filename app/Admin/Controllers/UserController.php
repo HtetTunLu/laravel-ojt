@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -88,6 +89,28 @@ class UserController extends AdminController
      */
     protected function form()
     {
+        Admin::script('$(document).ready(function(){
+            $(".pull-right button").prop("class", "btn btn-primary submit");
+            $(".submit").click(function(){
+                if($(".submit").text() === "Submit") {
+                    $("form input").prop("readonly", true);
+                    $("form textarea").prop("readonly", true);
+                    $(".submit").html("Confirm");
+                    $(".btn-warning").html("Back");
+                    return false;
+                }
+            });
+
+            $(".btn-warning").click(function(){
+                if($(".btn-warning").text() === "Back") {
+                    $("form input").prop("readonly", false);
+                    $("form textarea").prop("readonly", false);
+                    $(".submit").html("Submit");
+                    $(".btn-warning").html("Reset");
+                    return false;
+                }
+            });
+        });');
         $form = new Form(new User());
 
         $form->text('name', __('Name'))->rules('required');
@@ -97,8 +120,9 @@ class UserController extends AdminController
         $form->password('password', __('Password'))->rules('required')->default(function ($form) {
             return $form->model()->password;
         });
-        $form->confirm('confirm edit ?', 'edit');
-        $form->confirm('confirm create ?', 'create');
+        $form->disableCreatingCheck();
+        $form->disableEditingCheck();
+        $form->disableViewCheck();
         return $form;
     }
 }
