@@ -36,4 +36,6 @@ Change Custom Files
 
     - requirements/UserController.php -> Vendor/encore/laravel-admin/src/Controllers/UserController.php
 
+    - requirements/login.blade.php -> Vendor/encore/laravel-admin/resources/views/login.blade.php
+
 ```

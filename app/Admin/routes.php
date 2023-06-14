@@ -1,6 +1,7 @@
 <?php
 
 use App\Admin\Controllers\PostController;
+use App\Admin\Controllers\RegisterController;
 use Encore\Admin\Controllers\AdminController;
 use Illuminate\Routing\Router;
 
@@ -26,4 +27,6 @@ Route::group([
     // for CSV import
     $router->post('questions/csv/import', 'PostController@import');
 
+    $router->get('auth/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    $router->post('auth/register', [RegisterController::class, 'register']);
 });
