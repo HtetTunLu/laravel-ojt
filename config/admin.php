@@ -132,13 +132,16 @@ return [
         'remember' => true,
 
         // Redirect to the specified URI when user is not authorized.
-        'redirect_to' => 'auth/login',
+        'redirect_to' => 'auth/signin',
 
         // The URIs that should be excluded from authorization.
         'excepts' => [
             'auth/login',
             'auth/logout',
-            'auth/register'
+            'auth/register',
+            'auth/signin',
+            'auth/forgot',
+            'auth/reset'
         ],
     ],
 

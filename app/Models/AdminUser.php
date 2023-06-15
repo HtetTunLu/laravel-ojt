@@ -19,4 +19,12 @@ class AdminUser extends Model
         'phone',
         'address'
     ];
+
+    public function posts() {
+        return $this->hasMany(Post::class);
+    }
+
+    public function forgot_passwords() {
+        return $this->hasMany(ForgotPassword::class);
+    }
 }

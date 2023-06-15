@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -14,6 +13,7 @@ use Encore\Admin\Show;
 use App\Admin\Extensions\Tools\ImportButton; // Add for custom CSV Import Button
 use Encore\Admin\Layout\Content; // Add for CSV Import
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends AdminController
 {
@@ -31,6 +31,45 @@ class PostController extends AdminController
      */
     protected function grid()
     {
+        Admin::script('$(document).ready(function(){
+            $(".column-__actions__").click(function(e){
+                console.log($(this).parent());
+                $("<div>", {
+                    "class": "new",
+                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
+                    text: "Name: " +$(this).parent()[0].children[2].textContent
+                }).appendTo(".swal2-content");
+
+                $("<div>", {
+                    "class": "new",
+                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
+                    text: "Description: " + $(this).parent()[0].children[3].textContent
+                }).appendTo(".swal2-content");
+
+                $("<div>", {
+                    "class": "new",
+                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
+                    text: "Created User: " + $(this).parent()[0].children[4].textContent
+                }).appendTo(".swal2-content");
+
+                $("<div>", {
+                    "class": "new",
+                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
+                    text: "Status: " + $(this).parent()[0].children[5].textContent
+                }).appendTo(".swal2-content");
+            });
+
+            $(".dropdown-menu li a").click(function(data){
+
+                if($(this)[0].textContent === "Delete") {
+
+                    console.log($(".swal2-container").parent());
+                    $(".swal2-container")[0].children[0].style.width = "400px";
+
+                }
+            });
+        });');
+
         $grid = new Grid(new Post());
 
         // Use custom button tools here which made above.
@@ -45,10 +84,12 @@ class PostController extends AdminController
         });
 
         $grid->column('description', __('Description'));
-        $grid->column('user.name', __('Created User'))
+        $grid->column('admin_user.name', __('Created User'))
             ->setAttributes(['style' => 'color:green;'])
             ->help('This column is Created User name column');
-        ;
+        $grid->column('status')->display(function ($status) {
+            return $status === 1 ? 'on' : 'off';
+        });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->paginate(10);
@@ -69,7 +110,7 @@ class PostController extends AdminController
         });
 
         $grid->export(function ($export) {
-            $export->originalValue(['name', 'user_id']);
+            $export->originalValue(['name', 'user_id', 'status']);
             $export->column('created_at', function ($value, $original) {
                 return Carbon::parse($value)->format('Y/m/d');
             });
@@ -79,8 +120,9 @@ class PostController extends AdminController
         });
 
         $grid->actions(function ($value) {
+            $value->row;
+
             $value->getKey();
-            // dd($value);
         });
         return $grid;
     }
@@ -97,7 +139,10 @@ class PostController extends AdminController
         $show->field('id', __('Id'));
         $show->field('name', __('Name'));
         $show->field('description', __('Description'));
-        $show->field('user.name', __('Created User'));
+        $show->field('admin_user.name', __('Created User'));
+        $show->field('status', __('Status'))->as(function ($status) {
+            return $status === 1 ? 'ON' : 'OFF';
+        });
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -143,7 +188,8 @@ class PostController extends AdminController
         $form = new Form(new Post());
         $form->text('name', __('Name'))->rules('required');
         $form->textarea('description', __('Description'))->rules('required');
-        $form->select('user_id')->options(User::all()->pluck('name', 'id'))->rules('required');
+        $form->switch('status', __("Status"))->default(1);
+        $form->number('admin_user_id')->value(Auth::user()->id);
         $form->disableCreatingCheck();
         $form->disableEditingCheck();
         $form->disableViewCheck();

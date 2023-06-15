@@ -45,7 +45,4 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $primaryKey = 'id';
-    public function posts() {
-        return $this->hasMany(Post::class);
-    }
 }

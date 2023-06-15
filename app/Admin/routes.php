@@ -29,4 +29,11 @@ Route::group([
 
     $router->get('auth/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     $router->post('auth/register', [RegisterController::class, 'register']);
+
+    $router->get('auth/signin', [RegisterController::class, 'showSigninForm'])->name('signin');
+    $router->get('auth/forgot', [RegisterController::class, 'showForgotForm']);
+    $router->post('auth/forgot', [RegisterController::class, 'forgotPassword']);
+
+    $router->get('auth/reset', [RegisterController::class, 'showResetForm']);
+    $router->post('auth/reset', [RegisterController::class, 'resetPassword']);
 });

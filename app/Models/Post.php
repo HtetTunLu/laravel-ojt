@@ -15,10 +15,10 @@ class Post extends Model
     protected $fillable = [
         'name',
         'description',
-        'user_id',
+        'admin_user_id',
     ];
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function admin_user() {
+        return $this->belongsTo(AdminUser::class);
     }
 
     protected static function boot()
