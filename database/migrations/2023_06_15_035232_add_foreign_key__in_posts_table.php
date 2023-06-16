@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->integer('admin_user_id')->unsigned()->change();
+            // $table->integer('admin_user_id')->unsigned()->change();
 
-            $table->foreign('admin_user_id')->references('id')->on('admin_users');
+            // $table->foreign('admin_user_id')->references('id')->on('admin_users')->onDelete('cascade');
         });
     }
 

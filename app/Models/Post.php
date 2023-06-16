@@ -16,6 +16,7 @@ class Post extends Model
         'name',
         'description',
         'admin_user_id',
+        'status'
     ];
     public function admin_user() {
         return $this->belongsTo(AdminUser::class);
@@ -29,6 +30,10 @@ class Post extends Model
             $post = Post::where('id', $request->id)->first();
             $post->deleted_user_id = \Illuminate\Support\Facades\Auth::user()->id;
             $post->save();
+        });
+
+        self::creating(function ($request) {
+            $request->admin_user_id = \Illuminate\Support\Facades\Auth::user()->id;
         });
     }
 }

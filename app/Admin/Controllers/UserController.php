@@ -2,6 +2,9 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\AdminRole;
+use App\Models\AdminRoleUser;
+use App\Models\AdminUser;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
@@ -9,6 +12,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Support\Facades\Hash;
+
+use App\Admin\Extensions\Tools\ImportButton; // Add for custom CSV Import Button
+use Encore\Admin\Layout\Content; // Add for CSV Import
+use Illuminate\Http\Request;
 
 class UserController extends AdminController
 {
@@ -28,55 +35,115 @@ class UserController extends AdminController
     {
         Admin::script('$(document).ready(function(){
             $(".column-__actions__").click(function(e){
-                console.log($(this).parent());
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Username: " +$(this).parent()[0].children[2].textContent
+                    "class": "custom-username",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
-                $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Name: " + $(this).parent()[0].children[3].textContent
-                }).appendTo(".swal2-content");
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Username: "
+                }).appendTo(".custom-username");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[2].textContent
+                }).appendTo(".custom-username");
 
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Email: " + $(this).parent()[0].children[4].textContent
+                    "class": "custom-name",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
-                $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Phone Number: " + $(this).parent()[0].children[5].textContent
-                }).appendTo(".swal2-content");
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Name: "
+                }).appendTo(".custom-name");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[3].textContent
+                }).appendTo(".custom-name");
 
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Date of Birth: " + $(this).parent()[0].children[6].textContent
+                    "class": "custom-email",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
-                $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Address: " + $(this).parent()[0].children[7].textContent
-                }).appendTo(".swal2-content");
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Emai: "
+                }).appendTo(".custom-email");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[4].textContent
+                }).appendTo(".custom-email");
 
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Role: " + $(this).parent()[0].children[8].textContent
+                    "class": "custom-phone",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Ph Number: "
+                }).appendTo(".custom-phone");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[5].textContent
+                }).appendTo(".custom-phone");
+
+                $("<div>", {
+                    "class": "costom-dob",
+                    "style": "width: 100%;",
+                }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Ph Number: "
+                }).appendTo(".custom-dob");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[6].textContent
+                }).appendTo(".custom-dob");
+
+                $("<div>", {
+                    "class": "custom-address",
+                    "style": "width: 100%;",
+                }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Address: "
+                }).appendTo(".custom-address");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[7].textContent
+                }).appendTo(".custom-address");
+
+                $("<div>", {
+                    "class": "custom-role",
+                    "style": "width: 100%;",
+                }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Role: "
+                }).appendTo(".custom-role");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[8].textContent
+                }).appendTo(".custom-role");
             });
 
             $(".dropdown-menu li a").click(function(data){
 
                 if($(this)[0].textContent === "Delete") {
-
-                    console.log($(".swal2-container").parent());
                     $(".swal2-container")[0].children[0].style.width = "600px";
 
                 }
@@ -85,6 +152,10 @@ class UserController extends AdminController
         $userModel = config('admin.database.users_model');
 
         $grid = new Grid(new $userModel());
+        // Use custom button tools here which made above.
+        $grid->tools(function ($tools) {
+            $tools->append(new ImportButton());
+        });
 
         $grid->column('id', 'ID')->sortable();
         $grid->column('username', trans('admin.username'));
@@ -128,10 +199,11 @@ class UserController extends AdminController
                 $roleName = $roleModel::all()->pluck('name');
                 return trim($roleName, '"[]"');
             });
-            // $export->originalValue(['roles'] ,function($value, $original) {
-            //     return $value;
-            // });
+
             $export->column('dob', function ($value, $original) {
+                return Carbon::parse($value)->format('Y/m/d');
+            });
+            $export->column('created_at', function ($value, $original) {
                 return Carbon::parse($value)->format('Y/m/d');
             });
             $export->column('updated_at', function ($value, $original) {
@@ -182,6 +254,8 @@ class UserController extends AdminController
                 if($(".submit").text() === "Submit") {
                     $("form input").prop("readonly", true);
                     $("form textarea").prop("readonly", true);
+                    $(".select2-selection")[0].style.pointerEvents = "none";
+                    $(".file-preview")[0].style.pointerEvents = "none";
                     $(".btn-file")[0].style.visibility = "hidden";
                     $(".submit").html("Confirm");
                     $(".btn-warning").html("Back");
@@ -193,6 +267,8 @@ class UserController extends AdminController
                 if($(".btn-warning").text() === "Back") {
                     $("form input").prop("readonly", false);
                     $("form textarea").prop("readonly", false);
+                    $(".select2-selection")[0].style.pointerEvents = "auto";
+                    $(".file-preview")[0].style.pointerEvents = "auto";
                     $(".btn-file")[0].style.visibility = "visible";
                     $(".submit").html("Submit");
                     $(".btn-warning").html("Reset");
@@ -241,5 +317,56 @@ class UserController extends AdminController
         $form->disableViewCheck();
 
         return $form;
+    }
+
+    /**
+     * Import interface.
+     */
+    protected function import(Content $content, Request $request)
+    {
+        $file = $request->file('file');
+        $csv = array_map('str_getcsv', file($file));
+
+        foreach ($csv as $key => $row) {
+            // index 0 for titles
+            if ($key > 0) {
+                $id = (Int) $row[0];
+                $username = $row[1];
+                $name = $row[2];
+                $email = $row[3];
+                $phone = $row[4];
+                $dob = $row[5];
+                $address = $row[6];
+                $role_id = AdminRole::where('name', $row[7])->first()->id;
+                $post = AdminUser::where('id', $id)->first();
+                if (!$post) {
+                    $req = new AdminUser();
+                    $req->id = $id;
+                    $req->username = $username;
+                    $req->name = $name;
+                    $req->email = $email;
+                    $req->phone = $phone;
+                    $req->dob = $dob;
+                    $req->address = $address;
+                    $req->password = Hash::make("Password");
+                    $req->save();
+                    $admin_role_user = new AdminRoleUser();
+                    $admin_role_user->role_id = $role_id;
+                    $admin_role_user->user_id = $id;
+                    $admin_role_user->save();
+                } else {
+                    $post->id = $id;
+                    $post->username = $username;
+                    $post->name = $name;
+                    $post->email = $email;
+                    $post->phone = $phone;
+                    $post->dob = $dob;
+                    $post->address = $address;
+                    $post->save();
+                }
+            }
+
+        }
+        return redirect('admin/users-clients');
     }
 }

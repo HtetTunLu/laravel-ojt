@@ -25,7 +25,8 @@ Route::group([
     $router->put('/users-clients/{id}/confirm_update', [AdminController::class, 'edit']);
 
     // for CSV import
-    $router->post('questions/csv/import', 'PostController@import');
+    $router->post('posts/csv/import', 'PostController@import');
+    $router->post('users/csv/import', 'UserController@import');
 
     $router->get('auth/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     $router->post('auth/register', [RegisterController::class, 'register']);

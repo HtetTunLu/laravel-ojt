@@ -35,28 +35,64 @@ class PostController extends AdminController
             $(".column-__actions__").click(function(e){
                 console.log($(this).parent());
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Name: " +$(this).parent()[0].children[2].textContent
+                    "class": "custom-name",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
-                $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Description: " + $(this).parent()[0].children[3].textContent
-                }).appendTo(".swal2-content");
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Name: "
+                }).appendTo(".custom-name");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[2].textContent
+                }).appendTo(".custom-name");
 
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Created User: " + $(this).parent()[0].children[4].textContent
+                    "class": "custom-description",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Description: "
+                }).appendTo(".custom-description");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[3].textContent
+                }).appendTo(".custom-description");
+
                 $("<div>", {
-                    "class": "new",
-                    "style": "font-size: 30px; text-align: center; margin: 15px 0;",
-                    text: "Status: " + $(this).parent()[0].children[5].textContent
+                    "class": "custom-user",
+                    "style": "width: 100%;",
                 }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Created User: "
+                }).appendTo(".custom-user");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[4].textContent
+                }).appendTo(".custom-user");
+
+                $("<div>", {
+                    "class": "custom-status",
+                    "style": "width: 100%;",
+                }).appendTo(".swal2-content");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0; width: 40%; display: inline-block;",
+                    text: "Status: "
+                }).appendTo(".custom-status");
+
+                $("<span>", {
+                    "style": "font-size: 25px; text-align: left; margin: 15px 0",
+                    text: $(this).parent()[0].children[5].textContent
+                }).appendTo(".custom-status");
             });
 
             $(".dropdown-menu li a").click(function(data){
@@ -162,6 +198,7 @@ class PostController extends AdminController
                 if($(".submit").text() === "Submit") {
                     $("form input").prop("readonly", true);
                     $("form textarea").prop("readonly", true);
+                    $(".bootstrap-switch")[0].style.pointerEvents = "none";
                     $(".select2-selection").click(function() {
                         $(".select2-dropdown")[0].style.visibility = "hidden";
                     });
@@ -175,6 +212,7 @@ class PostController extends AdminController
                 if($(".btn-warning").text() === "Back") {
                     $("form input").prop("readonly", false);
                     $("form textarea").prop("readonly", false);
+                    $(".bootstrap-switch")[0].style.pointerEvents = "auto";
                     $(".select2-selection").click(function() {
                         $(".select2-dropdown")[0].style.visibility = "visible";
                     });
@@ -189,7 +227,6 @@ class PostController extends AdminController
         $form->text('name', __('Name'))->rules('required');
         $form->textarea('description', __('Description'))->rules('required');
         $form->switch('status', __("Status"))->default(1);
-        $form->number('admin_user_id')->value(Auth::user()->id);
         $form->disableCreatingCheck();
         $form->disableEditingCheck();
         $form->disableViewCheck();
@@ -210,17 +247,22 @@ class PostController extends AdminController
                 $id = (Int) $row[0];
                 $name = $row[1];
                 $description = $row[2];
-
+                $user_id = Auth::user()->id;
+                $status = (Int) $row[4];
                 $post = Post::where('id', $id)->first();
                 if (!$post) {
                     $req = new Post();
                     $req->id = $id;
                     $req->name = $name;
                     $req->description = $description;
+                    $req->admin_user_id = $user_id;
+                    $req->status = $status;
                     $req->save();
                 } else {
                     $post->name = $name;
                     $post->description = $description;
+                    $post->admin_user_id = $user_id;
+                    $post->status = $status;
                     $post->save();
                 }
             }

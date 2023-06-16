@@ -34,10 +34,10 @@ $('#confirm').on('click', function() {
         formData.append( "file", $("input[name='csvfile']").prop("files")[0] );
     }
     formData.append("_token", LA.token);
-
+    console.log(window.location.pathname);
     $.ajax({
         method: 'POST',
-        url: '/admin/questions/csv/import',
+        url: window.location.pathname === "/admin/users-clients" ?  '/admin/users/csv/import' : '/admin/posts/csv/import',
         data: formData,
         processData: false,
         contentType: false,
