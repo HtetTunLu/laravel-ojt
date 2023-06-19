@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\AdminRoleUser;
 use App\Models\Post;
 use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
@@ -106,8 +107,11 @@ class PostController extends AdminController
             });
         });');
 
+        // dd(Post::where('admin_user_id', 1));
         $grid = new Grid(new Post());
-
+        if (AdminRoleUser::where('user_id', Auth::user()->id)->first()->role_id !== 1) {
+            $grid->model()->where('admin_user_id', Auth::user()->id);
+        }
         // Use custom button tools here which made above.
         $grid->tools(function ($tools) {
             $tools->append(new ImportButton());

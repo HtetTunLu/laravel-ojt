@@ -194,10 +194,8 @@ class UserController extends AdminController
         });
 
         $grid->export(function ($export) {
-            $export->column('roles', function ($value) {
-                $roleModel = config('admin.database.roles_model');
-                $roleName = $roleModel::all()->pluck('name');
-                return trim($roleName, '"[]"');
+            $export->column('roles', function ($value, $original) {
+                return trim($value, "<span class='label label-success'></span>");
             });
 
             $export->column('dob', function ($value, $original) {
