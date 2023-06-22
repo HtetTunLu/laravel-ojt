@@ -250,13 +250,47 @@ class UserController extends AdminController
             $(".pull-right button").prop("class", "btn btn-primary submit");
             $(".submit").click(function(){
                 if($(".submit").text() === "Submit") {
-                    $("form input").prop("readonly", true);
-                    $("form textarea").prop("readonly", true);
-                    $(".select2-selection")[0].style.pointerEvents = "none";
-                    $(".file-preview")[0].style.pointerEvents = "none";
-                    $(".btn-file")[0].style.visibility = "hidden";
-                    $(".submit").html("Confirm");
-                    $(".btn-warning").html("Back");
+                    $errArr = [];
+                    $dataArr = ["username", "name", "email", "dob", "phone", "address", "password", "password_confirmation"]
+                    $labelArr = ["User Name" , "Name", "Email", "Date of Birth", "Phone Number", "Address", "Password", "Password Comfirmation"]
+                    $.each($dataArr, function(index, data){
+                        if($(`.error-msg-${data}`)[0]) {
+                            $(`.error-msg-${data}`).remove();
+                        }
+                    })
+                    $.each($dataArr, function(index, value) {
+                        if($(`.${value}`)[0].value === "") {
+                            $errArr.push(value);
+                            $("<div>", {
+                                "class": `error-msg-${value}`,
+                                "style": "width: 100%; color: red;",
+                                "text": `${$labelArr[index]} cannot be blank!`
+                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
+                        } else if($(`.${value}`)[0].value !== "" && index === 2 && !/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test($(`.${value}`)[0].value)) {
+                            $errArr.push(value);
+                            $("<div>", {
+                                "class": `error-msg-${value}`,
+                                "style": "width: 100%; color: red;",
+                                "text": `${$labelArr[index]} format wrong!`
+                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
+                        } else if($(`.${value}`)[0].value !== "" && index === 6 && $(`.${value}`)[0].value !==  $(".password_confirmation")[0].value) {
+                            $errArr.push(value);
+                            $("<div>", {
+                                "class": `error-msg-${value}`,
+                                "style": "width: 100%; color: red;",
+                                "text": `${$labelArr[index]} do not match with confirm password!`
+                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
+                        }
+                    })
+                    if($errArr.length === 0) {
+                        $("form input").prop("readonly", true);
+                        $("form textarea").prop("readonly", true);
+                        $(".select2-selection")[0].style.pointerEvents = "none";
+                        $(".file-preview")[0].style.pointerEvents = "none";
+                        $(".btn-file")[0].style.visibility = "hidden";
+                        $(".submit").html("Confirm");
+                        $(".btn-warning").html("Back");
+                    }
                     return false;
                 }
             });

@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-xs-8 text-end mt-2">
                             <p style="display: inline-block" class="ml-5">Don't have an account?</p>
-                            <a href="{{ url('admin/auth/register') }}" class="btn btn-primary btn-flat">Register</a>
+                            <a href="{{ url('admin/auth/register') }}">Register here ...</a>
                             <div>
                                 <a href="{{ url('admin/auth/forgot') }}">Forgot your passowrd ?</a>
                             </div>

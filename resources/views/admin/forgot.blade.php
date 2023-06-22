@@ -27,10 +27,14 @@
                         </div>
 
                         <div class="row mb-0">
-                            <div class="col-md-6 text-center offset-md-4">
+                            <div class="col-md-2 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Reset Password') }}
+                                    {{ __('Reset') }}
                                 </button>
+                            </div>
+                            <div  class="col-md-2"> </div>
+                            <div  class="col-md-2">
+                                <a href="{{ url('admin/auth/signin') }}">Login here ...</a>
                             </div>
                         </div>
                     </form>

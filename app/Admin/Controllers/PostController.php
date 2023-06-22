@@ -34,7 +34,6 @@ class PostController extends AdminController
     {
         Admin::script('$(document).ready(function(){
             $(".column-__actions__").click(function(e){
-                console.log($(this).parent());
                 $("<div>", {
                     "class": "custom-name",
                     "style": "width: 100%;",
@@ -99,8 +98,6 @@ class PostController extends AdminController
             $(".dropdown-menu li a").click(function(data){
 
                 if($(this)[0].textContent === "Delete") {
-
-                    console.log($(".swal2-container").parent());
                     $(".swal2-container")[0].children[0].style.width = "400px";
 
                 }
@@ -200,15 +197,35 @@ class PostController extends AdminController
             $(".pull-right button").prop("class", "btn btn-primary submit");
             $(".submit").click(function(){
                 if($(".submit").text() === "Submit") {
-                    $("form input").prop("readonly", true);
-                    $("form textarea").prop("readonly", true);
-                    $(".bootstrap-switch")[0].style.pointerEvents = "none";
-                    $(".select2-selection").click(function() {
-                        $(".select2-dropdown")[0].style.visibility = "hidden";
-                    });
-                    $(".submit").html("Confirm");
-                    $(".btn-warning").html("Back");
+                    $errArr = [];
+                    $dataArr = ["name", "description"]
+                    $.each($dataArr, function(index, data){
+                        if($(`.error-msg-${data}`)[0]) {
+                            $(`.error-msg-${data}`).remove();
+                        }
+                    })
+                    $.each($dataArr, function(index, value) {
+                        if($(`.${value}`)[0].value === "") {
+                            $errArr.push(value);
+                            $("<div>", {
+                                "class": `error-msg-${value}`,
+                                "style": "width: 100%; color: red;",
+                                "text": `${index === 0 ? "Name" : "Description"} cannot be blank!`
+                            }).appendTo(index === 0 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
+                        }
+                    })
+                    if($errArr.length === 0) {
+                        $("form input").prop("readonly", true);
+                        $("form textarea").prop("readonly", true);
+                        $(".bootstrap-switch")[0].style.pointerEvents = "none";
+                        $(".select2-selection").click(function() {
+                            $(".select2-dropdown")[0].style.visibility = "hidden";
+                        });
+                        $(".submit").html("Confirm");
+                        $(".btn-warning").html("Back");
+                    }
                     return false;
+
                 }
             });
 

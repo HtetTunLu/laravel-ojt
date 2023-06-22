@@ -39,13 +39,13 @@ class RegisterController extends AdminController
         $request->validate([
             'username' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            // 'email' => 'required|string|email|unique:admin_users|max:255',
+            'email' => 'required|string|email|unique:admin_users|max:255',
             'password' => 'required|string|min:8|confirmed',
         ]);
         $user = AdminUser::create([
             'username' => $request->input('username'),
             'name' => $request->input('name'),
-            // 'email' => $request->input('email'),
+            'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
 
