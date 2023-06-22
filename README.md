@@ -23,7 +23,7 @@ php artisan db:seed --class=AdminMenuSeeder
 
 ```
 
-Change Custom Files
+Change Custom Files (can skip)
 
 ```zsh
 - Replace all files inside of requirements folder
@@ -37,5 +37,23 @@ Change Custom Files
     - requirements/UserController.php -> Vendor/encore/laravel-admin/src/Controllers/UserController.php
 
     - requirements/login.blade.php -> Vendor/encore/laravel-admin/resources/views/login.blade.php
+
+```
+
+Docker commands
+
+```zsh
+# for the first time
+make setup
+make data
+
+# run docker
+make up
+
+# stop docker
+make stop
+
+# set initial data for database
+make data
 
 ```

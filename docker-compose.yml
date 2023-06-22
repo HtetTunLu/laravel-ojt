@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  main:
+    container_name: Serve
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'php artisan serve --host=0.0.0.0'
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 8000:8000
+
+  mysql_db:
+    image: mysql:8.0.20
+    container_name: Database
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel_migration
+    ports:
+      - 3306:3306
