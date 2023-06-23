@@ -50,11 +50,9 @@ class RegisterController extends AdminController
         ]);
 
         AdminRoleUser::create([
-            'role_id' => 1,
+            'role_id' => 2,
             'user_id' => $user->id
         ]);
-
-        // $this->loginValidator($request->all())->validate();
 
         $credentials = $request->only(['username', 'password']);
         $remember = $request->get('remember', false);

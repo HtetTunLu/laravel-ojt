@@ -2,6 +2,7 @@
 
 use App\Admin\Controllers\PostController;
 use App\Admin\Controllers\RegisterController;
+use App\Http\Middleware\RoleIsValid;
 use Encore\Admin\Controllers\AdminController;
 use Illuminate\Routing\Router;
 
@@ -15,7 +16,7 @@ Route::group([
 ], function (Router $router) {
     // default
     $router->get('/', 'HomeController@index')->name('home');
-    $router->resource('users-clients', UserController::class);
+    $router->resource('users-clients', UserController::class)->middleware(RoleIsValid::class);
     $router->resource('posts', PostController::class);
 
     // for custom confirm edit
