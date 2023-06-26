@@ -96,7 +96,7 @@ class UserController extends AdminController
                 }).appendTo(".custom-phone");
 
                 $("<div>", {
-                    "class": "costom-dob",
+                    "class": "custom-dob",
                     "style": "width: 100%;",
                 }).appendTo(".swal2-content");
 
@@ -251,35 +251,67 @@ class UserController extends AdminController
             $(".submit").click(function(){
                 if($(".submit").text() === "Submit") {
                     $errArr = [];
-                    $dataArr = ["username", "name", "email", "dob", "phone", "address", "password", "password_confirmation"]
-                    $labelArr = ["User Name" , "Name", "Email", "Date of Birth", "Phone Number", "Address", "Password", "Password Comfirmation"]
+                    $dataArr = $dataArr = [
+                        {
+                            name: "username",
+                            label: "User Name"
+                        },
+                        {
+                            name: "name",
+                            label: "Name"
+                        },
+                        {
+                            name: "email",
+                            label: "Email"
+                        },
+                        {
+                            name: "dob",
+                            label: "Date of Birth"
+                        },
+                        {
+                            name: "phone",
+                            label: "Phone Number"
+                        },
+                        {
+                            name: "address",
+                            label: "Address"
+                        },
+                        {
+                            name: "password",
+                            label: "Password"
+                        },
+                        {
+                            name: "password_confirmation",
+                            label: "Password Comfirmation"
+                        }
+                    ];
                     $.each($dataArr, function(index, data){
-                        if($(`.error-msg-${data}`)[0]) {
-                            $(`.error-msg-${data}`).remove();
+                        if($(`.error-msg-${data.name}`)[0]) {
+                            $(`.error-msg-${data.name}`).remove();
                         }
                     })
                     $.each($dataArr, function(index, value) {
-                        if($(`.${value}`)[0].value === "") {
-                            $errArr.push(value);
+                        if($(`.${value.name}`)[0].value === "") {
+                            $errArr.push(value.name);
                             $("<div>", {
-                                "class": `error-msg-${value}`,
+                                "class": `error-msg-${value.name}`,
                                 "style": "width: 100%; color: red;",
-                                "text": `${$labelArr[index]} cannot be blank!`
-                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
-                        } else if($(`.${value}`)[0].value !== "" && index === 2 && !/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test($(`.${value}`)[0].value)) {
-                            $errArr.push(value);
+                                "text": `${$value.label} cannot be blank!`
+                            }).appendTo(index !== 5 ? $(`.${value.name}`)[0].parentNode.parentNode : $(`.${value.name}`)[0].parentNode);
+                        } else if($(`.${value.name}`)[0].value !== "" && index === 2 && !/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test($(`.${value.name}`)[0].value)) {
+                            $errArr.push(value.name);
                             $("<div>", {
-                                "class": `error-msg-${value}`,
+                                "class": `error-msg-${value.name}`,
                                 "style": "width: 100%; color: red;",
-                                "text": `${$labelArr[index]} format wrong!`
-                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
-                        } else if($(`.${value}`)[0].value !== "" && index === 6 && $(`.${value}`)[0].value !==  $(".password_confirmation")[0].value) {
-                            $errArr.push(value);
+                                "text": `${$value.label} format wrong!`
+                            }).appendTo(index !== 5 ? $(`.${value.name}`)[0].parentNode.parentNode : $(`.${value.name}`)[0].parentNode);
+                        } else if($(`.${value.name}`)[0].value !== "" && index === 6 && $(`.${value.name}`)[0].value !==  $(".password_confirmation")[0].value) {
+                            $errArr.push(value.name);
                             $("<div>", {
-                                "class": `error-msg-${value}`,
+                                "class": `error-msg-${value.name}`,
                                 "style": "width: 100%; color: red;",
-                                "text": `${$labelArr[index]} do not match with confirm password!`
-                            }).appendTo(index !== 5 ? $(`.${value}`)[0].parentNode.parentNode : $(`.${value}`)[0].parentNode);
+                                "text": `${$value.label} do not match with confirm password!`
+                            }).appendTo(index !== 5 ? $(`.${value.name}`)[0].parentNode.parentNode : $(`.${value.name}`)[0].parentNode);
                         }
                     })
                     if($errArr.length === 0) {

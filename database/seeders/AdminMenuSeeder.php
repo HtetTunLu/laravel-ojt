@@ -48,5 +48,8 @@ class AdminMenuSeeder extends Seeder
             'role_id' => 2,
             'permission_id' => 1
         ]);
+
+        AdminMenu::where('id', 4)->first()->delete();
+        AdminMenu::where('id', 5)->first()->delete();
     }
 }
